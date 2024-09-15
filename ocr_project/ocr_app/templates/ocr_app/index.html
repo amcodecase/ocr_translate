@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR and Translation</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            padding-top: 56px; /* Ensure content is not hidden behind fixed navbar */
+        }
+        footer {
+            padding: 1rem;
+            text-align: center;
+        }
+        .form-group {
+            position: relative;
+        }
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 10px;
+        }
+        .form-control {
+            padding-left: 2.5rem; /* Adjust padding to make space for icon */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">OCR & Translation</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <!-- Add more nav items here if needed -->
+                <li class="nav-item ml-auto">
+                    <a class="nav-link" href="#" id="userNameDisplay"><i class="fas fa-user"></i> Guest</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">OCR and Translation Tool</h1>
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <i class="fas fa-image"></i>
+                <label for="image">Upload Image (Optional)</label>
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+            </div>
+            <div class="form-group">
+                <i class="fas fa-pencil-alt"></i>
+                <label for="text">Enter Text (Optional)</label>
+                <textarea class="form-control" id="text" name="text" rows="4" placeholder="Type text here..."></textarea>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-language"></i>
+                <label for="language">Select Language for Translation</label>
+                <select class="form-control" id="language" name="language" required>
+                    {% for code, lang in languages %}
+                        <option value="{{ code }}">{{ lang }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Submit</button>
+            <button type="reset" class="btn btn-secondary ml-2" onclick="clearInputs()"><i class="fas fa-redo"></i> Reset</button>
+        </form>
+        {% if result %}
+            <div class="mt-4 alert alert-info">
+                <h4>Translated Text:</h4>
+                <p>{{ result }}</p>
+            </div>
+        {% elif error_message %}
+            <div class="mt-4 alert alert-warning">
+                <h4>Translation Error:</h4>
+                <p>{{ error_message }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Tapiwa Zulu</p>
+        <p>Email: <a href="mailto:info@natec.co.zm">tmzulu2@gmail.com</a></p>
+        <p>Phone: 0970617711</p>
+        <p>Chalimbana Road, Chongwe, Lusaka Zambia</p>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- FontAwesome JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+    <!-- User Name Prompt Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Check if user name is stored
+            let userName = localStorage.getItem('userName');
+            if (!userName) {
+                userName = prompt('Please enter your name:');
+                if (userName) {
+                    localStorage.setItem('userName', userName);
+                } else {
+                    userName = 'Guest'; // Default name if nothing is entered
+                }
+            }
+            document.getElementById('userNameDisplay').textContent = userName;
+        });
+
+        function clearInputs() {
+            document.getElementById('image').value = '';
+            document.getElementById('text').value = '';
+        }
+    </script>
+</body>
+</html>
